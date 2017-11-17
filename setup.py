@@ -13,7 +13,7 @@ setup(author="Andrew Michaud",
           "console_scripts": ["knowsska_bot = knowsska_bot.__main__:main"]
       },
 
-      install_requires=["botskeleton>=1.1.0"],
+      install_requires=["botskeleton>=1.2.2"],
 
       license="BSD3",
 
