@@ -3,8 +3,8 @@ from os import path
 import botskeleton
 
 DELAY = 3600
-OUR_LOOKBACK_LIMIT = 30
-THEIR_LOOKBACK_LIMIT = 20
+OUR_LOOKBACK_LIMIT = 50
+THEIR_LOOKBACK_LIMIT = 40
 
 if __name__ == "__main__":
     HERE = path.abspath(path.dirname(__file__))
