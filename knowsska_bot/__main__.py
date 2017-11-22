@@ -51,7 +51,7 @@ if __name__ == "__main__":
                                                in_reply_to_status_id=id)
 
                 LOG.info("Sleeping for a bit between tweets.")
-                BOT_SKELETON.delay = DELAY/60
+                BOT_SKELETON.delay = DELAY//60
                 BOT_SKELETON.nap()
 
             else:
