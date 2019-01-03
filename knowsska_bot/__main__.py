@@ -63,9 +63,9 @@ def main():
 def choose_answer(message_id):
     # Choose our answer.
     if random.random() < 0.15:
-        answer = "Yes"
+        return "Yes"
     else:
-        answer = "No"
+        return "No"
 
 
 if __name__ == "__main__":
