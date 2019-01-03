@@ -6,7 +6,8 @@ DELAY = 3600
 OUR_LOOKBACK_LIMIT = 50
 THEIR_LOOKBACK_LIMIT = 40
 
-if __name__ == "__main__":
+def main():
+    """main"""
     HERE = path.abspath(path.dirname(__file__))
     SECRETS_DIR = path.join(HERE, "SECRETS")
     BOT_SKELETON = botskeleton.BotSkeleton(SECRETS_DIR, bot_name="knowsska_bot", delay=DELAY)
@@ -40,11 +41,7 @@ if __name__ == "__main__":
             # Make sure we haven't replied to this status before.
             if id not in in_reply_to_ids:
 
-                # Choose our answer.
-                if id % 2 == 0:
-                    answer = "Yes"
-                else:
-                    answer = "No"
+                answer = choose_answer(id)
 
                 LOG.info(f"Replying {answer} to status {id} from {TARGET_HANDLE}.")
                 BOT_SKELETON.api.update_status(f"@{TARGET_HANDLE} {answer}",
@@ -60,3 +57,15 @@ if __name__ == "__main__":
         LOG.info("Sleeping for longer between searches for tweets.")
         BOT_SKELETON.delay = DELAY
         BOT_SKELETON.nap()
+
+
+def choose_answer(message_id):
+    # Choose our answer.
+    if random.random() < 0.15:
+        answer = "Yes"
+    else:
+        answer = "No"
+
+
+if __name__ == "__main__":
+    main()
