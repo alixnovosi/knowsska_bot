@@ -15,57 +15,48 @@ def main():
 
     LOG = BOT_SKELETON.log
 
-    LOG.info("Retrieving TARGET_ID...")
-    with open(path.join(SECRETS_DIR, "TARGET_ID")) as f:
-        TARGET_ID = f.read().strip()
+    LOG.info("Retrieving BIRDSITE_TARGET_HANDLE...")
+    with open(path.join(SECRETS_DIR, "BIRDSITE_TARGET_HANDLE")) as f:
+        BIRDSITE_TARGET_HANDLE = f.read().strip()
 
-    LOG.info("Retrieving TARGET_HANDLE...")
-    with open(path.join(SECRETS_DIR, "TARGET_HANDLE")) as f:
-        TARGET_HANDLE = f.read().strip()
+    LOG.info("Retrieving MASTODON_TARGET_HANDLE...")
+    with open(path.join(SECRETS_DIR, "MASTODON_TARGET_HANDLE")) as f:
+        MASTODON_TARGET_HANDLE = f.read().strip()
 
     while True:
-        # Get our statuses so we can tell if we've replied before.
-        statuses = BOT_SKELETON.api.user_timeline(screen_name="knowsska_bot",
-                                                  count=OUR_LOOKBACK_LIMIT)
+        BOT_SKELETON.perform_batch_reply(
+            callback=choose_answer,
+            lookback_limit=20,
+            target_handles={
+                "birdsite": BIRDSITE_TARGET_HANDLE,
+                "mastodon": MASTODON_TARGET_HANDLE,
+            })
 
-        in_reply_to_ids = list(map(lambda x: x.in_reply_to_status_id, statuses))
-        LOG.info(f"Found reply-to ids: {in_reply_to_ids}")
-
-        # Get their last N statuses.
-        statuses = BOT_SKELETON.api.user_timeline(screen_name=TARGET_HANDLE,
-                                                  count=THEIR_LOOKBACK_LIMIT)
-
-        for status in statuses:
-
-            id = status.id
-
-            # Make sure we haven't replied to this status before.
-            if id not in in_reply_to_ids:
-
-                answer = choose_answer(id)
-
-                LOG.info(f"Replying {answer} to status {id} from {TARGET_HANDLE}.")
-                BOT_SKELETON.api.update_status(f"@{TARGET_HANDLE} {answer}",
-                                               in_reply_to_status_id=id)
-
-                LOG.info("Sleeping for a bit between tweets.")
-                BOT_SKELETON.delay = DELAY//60
-                BOT_SKELETON.nap()
-
-            else:
-                LOG.info(f"Not replying to status {id} from {TARGET_HANDLE} - we already replied.")
-
-        LOG.info("Sleeping for longer between searches for tweets.")
-        BOT_SKELETON.delay = DELAY
         BOT_SKELETON.nap()
 
 
-def choose_answer(message_id):
-    # Choose our answer.
+def choose_answer(*, message, message_id, **kwargs):
+    # the format we're trying to reverse-engineer and pull stuff out of is
+    # "Is {album_name} by {artist_name} ska?"
+    identifying_chunk = message[3:]
+
+    index = identifying_chunk.find("ska?")
+    identifying_chunk = identifying_chunk[:index-1]
+
+    # choose our answer.
+    random.seed(message_id)
     if random.random() < 0.15:
-        return "Yes"
+        if identifying_chunk is not None:
+            answer = f"Yes, {identifying_chunk} is ska!"
+        else:
+            answer = "Yes, that's ska!"
     else:
-        return "No"
+        if identifying_chunk is not None:
+            answer = f"No, {identifying_chunk} is definitely not ska!"
+        else:
+            answer = "No, that isn't ska!"
+
+    return answer
 
 
 if __name__ == "__main__":

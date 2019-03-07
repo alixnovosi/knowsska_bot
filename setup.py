@@ -13,7 +13,7 @@ setup(author="Andrew Michaud",
           "console_scripts": ["knowsska_bot = knowsska_bot.__main__:main"]
       },
 
-      install_requires=["botskeleton>=2.2.0"],
+      install_requires=["botskeleton>=3.2.0"],
 
       license="BSD3",
 
@@ -22,7 +22,6 @@ setup(author="Andrew Michaud",
       packages=find_packages(),
       python_requires=">=3.6",
 
-      # Project"s main homepage
-      url="https://github.com/andrewmichaud/knowsska_bot",
+      url="https://github.com/alixnovosi/knowsska_bot",
 
       version=VERSION)
